@@ -1,9 +1,9 @@
 package scene
 
 import (
-	"os"
 	"ray-tracer/bvh"
 	"ray-tracer/color"
+	"ray-tracer/config"
 	"ray-tracer/core"
 	"ray-tracer/material"
 	"ray-tracer/object"
@@ -11,7 +11,6 @@ import (
 	"ray-tracer/texture"
 	"ray-tracer/transform"
 	"ray-tracer/vector"
-	"ray-tracer/writer"
 )
 
 func CreateNextWeekFinalScene(imageWidth, samplesPerPixel, maxDepth int) func() {
@@ -78,7 +77,7 @@ func CreateNextWeekFinalScene(imageWidth, samplesPerPixel, maxDepth int) func() 
 			),
 		)
 
-		writer := writer.NewWriter(os.Args[1])
+		writer := config.NewWriter()
 
 		// Camera
 		camera := core.NewCamera()
@@ -96,6 +95,8 @@ func CreateNextWeekFinalScene(imageWidth, samplesPerPixel, maxDepth int) func() 
 		camera.DefocusAngle = 0
 		camera.FocusDistance = 10
 
-		camera.Render(world, writer)
+		if err := camera.Render(world, writer); err != nil {
+			panic(err)
+		}
 	}
 }

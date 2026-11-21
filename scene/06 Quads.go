@@ -1,13 +1,12 @@
 package scene
 
 import (
-	"os"
 	"ray-tracer/color"
+	"ray-tracer/config"
 	"ray-tracer/core"
 	"ray-tracer/material"
 	"ray-tracer/object"
 	"ray-tracer/vector"
-	"ray-tracer/writer"
 )
 
 func Quads() {
@@ -25,7 +24,7 @@ func Quads() {
 	world.Add(object.NewQuad(vector.NewPoint3(-2, 3, 1), vector.NewVector3(4, 0, 0), vector.NewVector3(0, 0, 4), upperOrange))
 	world.Add(object.NewQuad(vector.NewPoint3(-2, -3, 5), vector.NewVector3(4, 0, 0), vector.NewVector3(0, 0, -4), lowerTeal))
 
-	writer := writer.NewWriter(os.Args[1])
+	writer := config.NewWriter()
 
 	// Camera
 	camera := core.NewCamera()
@@ -42,5 +41,7 @@ func Quads() {
 
 	camera.DefocusAngle = 0
 
-	camera.Render(world, writer)
+	if err := camera.Render(world, writer); err != nil {
+		panic(err)
+	}
 }

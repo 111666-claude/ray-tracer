@@ -1,14 +1,13 @@
 package scene
 
 import (
-	"os"
 	"ray-tracer/color"
+	"ray-tracer/config"
 	"ray-tracer/core"
 	"ray-tracer/material"
 	"ray-tracer/object"
 	"ray-tracer/texture"
 	"ray-tracer/vector"
-	"ray-tracer/writer"
 )
 
 func Earth() {
@@ -20,7 +19,7 @@ func Earth() {
 
 	world.Add(globe)
 
-	writer := writer.NewWriter(os.Args[1])
+	writer := config.NewWriter()
 
 	// Camera
 	camera := core.NewCamera()
@@ -38,5 +37,7 @@ func Earth() {
 	camera.DefocusAngle = 0
 	camera.FocusDistance = 10
 
-	camera.Render(world, writer)
+	if err := camera.Render(world, writer); err != nil {
+		panic(err)
+	}
 }

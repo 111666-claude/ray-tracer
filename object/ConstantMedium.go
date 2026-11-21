@@ -2,10 +2,10 @@ package object
 
 import (
 	"math"
-	"math/rand/v2"
 	"ray-tracer/color"
 	"ray-tracer/core"
 	"ray-tracer/material"
+	"ray-tracer/random"
 	"ray-tracer/util"
 	"ray-tracer/vector"
 )
@@ -65,7 +65,7 @@ func (cm *ConstantMedium) Hit(ray *core.Ray, rayTime *util.Interval) *core.HitRe
 
 	rayLength := ray.Direction.Length()
 	distanceInsideBoundary := (hit2.Time - hit1.Time) * rayLength
-	hitDistance := cm.negatedInvertedDensity * math.Log(rand.Float64())
+	hitDistance := cm.negatedInvertedDensity * math.Log(random.UnitFloat64())
 
 	if hitDistance > distanceInsideBoundary {
 		return nil

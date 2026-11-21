@@ -3,8 +3,8 @@ package core
 import (
 	"fmt"
 	"math"
-	"math/rand/v2"
 	"ray-tracer/color"
+	"ray-tracer/random"
 	"ray-tracer/util"
 	"ray-tracer/vector"
 	"ray-tracer/writer"
@@ -57,12 +57,20 @@ func NewCamera() *Camera {
 	}
 }
 
-func (c *Camera) Render(world Hittable, writer *writer.Writer) {
+// Render accumulates pixel radiance in linear space and hands each pixel
+// to the writer, which owns tone mapping and 8-bit quantization. The
+// writer is always closed and the first write/encode error encountered is
+// returned, including an interrupted write.
+func (c *Camera) Render(world Hittable, writer *writer.Writer) error {
 	start := time.Now()
 
 	c.initialize()
 
-	writer.WriteHeader(c.ImageWidth, c.imageHeight)
+	if err := writer.WriteHeader(c.ImageWidth, c.imageHeight); err != nil {
+		_ = writer.Close()
+
+		return err
+	}
 
 	for j := range c.imageHeight {
 		fmt.Printf("Scanline remaining: %d\n", c.imageHeight-j)
@@ -75,12 +83,18 @@ func (c *Camera) Render(world Hittable, writer *writer.Writer) {
 				pixelColor.AddInPlace(c.rayColor(ray, c.MaxDepth, world))
 			}
 
-			writer.WriteColor(pixelColor.MultiplyBy(c.pixelSamplesScale))
+			if err := writer.WriteColor(pixelColor.MultiplyBy(c.pixelSamplesScale)); err != nil {
+				_ = writer.Close()
+
+				return err
+			}
 		}
 	}
 
 	elapsed := time.Since(start)
 	fmt.Printf("Done in %s\n", elapsed)
+
+	return writer.Close()
 }
 
 func (c *Camera) initialize() {
@@ -132,7 +146,7 @@ func (c *Camera) getRay(i int, j int) *Ray {
 
 	// We're forcing the ray tracer to render frame as it was starting in t=0 and ending in t=1,
 	// so we just generate random times between 0 and 1 for our rays.
-	rayTime := rand.Float64()
+	rayTime := random.UnitFloat64()
 
 	return NewTimedRay(rayOrigin, rayDirection, rayTime)
 }
@@ -160,8 +174,8 @@ func (c *Camera) rayColor(ray *Ray, depth int, world Hittable) *color.Color {
 
 func (c *Camera) sampleSquare() *vector.Vector3 {
 	return vector.NewVector3(
-		rand.Float64()-0.5,
-		rand.Float64()-0.5,
+		random.UnitFloat64()-0.5,
+		random.UnitFloat64()-0.5,
 		0,
 	)
 }

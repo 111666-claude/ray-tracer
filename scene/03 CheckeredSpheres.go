@@ -1,15 +1,14 @@
 package scene
 
 import (
-	"os"
 	"ray-tracer/bvh"
 	"ray-tracer/color"
+	"ray-tracer/config"
 	"ray-tracer/core"
 	"ray-tracer/material"
 	"ray-tracer/object"
 	"ray-tracer/texture"
 	"ray-tracer/vector"
-	"ray-tracer/writer"
 )
 
 func CheckeredSpheres() {
@@ -24,12 +23,7 @@ func CheckeredSpheres() {
 	bvhWorld := core.EmptyHittableList()
 	bvhWorld.Add(bvh.NewBVHNode(world.Objects()))
 
-	// Writer
-	if len(os.Args) < 2 {
-		panic("You need to supply file name")
-	}
-
-	writer := writer.NewWriter(os.Args[1])
+	writer := config.NewWriter()
 
 	// Camera
 	camera := core.NewCamera()
@@ -47,5 +41,7 @@ func CheckeredSpheres() {
 	camera.DefocusAngle = 0
 	camera.FocusDistance = 10
 
-	camera.Render(bvhWorld, writer)
+	if err := camera.Render(bvhWorld, writer); err != nil {
+		panic(err)
+	}
 }

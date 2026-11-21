@@ -1,14 +1,13 @@
 package scene
 
 import (
-	"os"
 	"ray-tracer/color"
+	"ray-tracer/config"
 	"ray-tracer/core"
 	"ray-tracer/material"
 	"ray-tracer/object"
 	"ray-tracer/texture"
 	"ray-tracer/vector"
-	"ray-tracer/writer"
 )
 
 func PerlinSpheres() {
@@ -19,7 +18,7 @@ func PerlinSpheres() {
 	world.Add(object.NewSphere(vector.NewPoint3(0, -1000, 0), 1000, noiseMaterial))
 	world.Add(object.NewSphere(vector.NewPoint3(0, 2, 0), 2, noiseMaterial))
 
-	writer := writer.NewWriter(os.Args[1])
+	writer := config.NewWriter()
 
 	// Camera
 	camera := core.NewCamera()
@@ -37,5 +36,7 @@ func PerlinSpheres() {
 	camera.DefocusAngle = 0
 	camera.FocusDistance = 10
 
-	camera.Render(world, writer)
+	if err := camera.Render(world, writer); err != nil {
+		panic(err)
+	}
 }

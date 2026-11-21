@@ -1,17 +1,15 @@
 package scene
 
 import (
-	"math/rand/v2"
-	"os"
 	"ray-tracer/bvh"
 	"ray-tracer/color"
+	"ray-tracer/config"
 	"ray-tracer/core"
 	"ray-tracer/material"
 	"ray-tracer/object"
 	"ray-tracer/random"
 	"ray-tracer/texture"
 	"ray-tracer/vector"
-	"ray-tracer/writer"
 )
 
 func BouncingSpheres() {
@@ -24,8 +22,8 @@ func BouncingSpheres() {
 
 	for a := -smallSphereCoefficient; a < smallSphereCoefficient; a++ {
 		for b := -smallSphereCoefficient; b < smallSphereCoefficient; b++ {
-			chooseMat := rand.Float64()
-			center := vector.NewPoint3(float64(a)+0.9*rand.Float64(), 0.2, float64(b)+0.9*rand.Float64())
+			chooseMat := random.UnitFloat64()
+			center := vector.NewPoint3(float64(a)+0.9*random.UnitFloat64(), 0.2, float64(b)+0.9*random.UnitFloat64())
 
 			if center.Substract(vector.NewPoint3(4, 0.2, 0)).Length() > 0.9 {
 				if chooseMat < 0.8 {
@@ -63,12 +61,7 @@ func BouncingSpheres() {
 
 	// world.Display()
 
-	// Writer
-	if len(os.Args) < 2 {
-		panic("You need to supply file name")
-	}
-
-	writer := writer.NewWriter(os.Args[1])
+	writer := config.NewWriter()
 
 	// Camera
 	camera := core.NewCamera()
@@ -87,5 +80,7 @@ func BouncingSpheres() {
 	camera.DefocusAngle = 0.6
 	camera.FocusDistance = 10.0
 
-	camera.Render(bvhWorld, writer)
+	if err := camera.Render(bvhWorld, writer); err != nil {
+		panic(err)
+	}
 }

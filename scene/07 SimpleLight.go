@@ -1,14 +1,13 @@
 package scene
 
 import (
-	"os"
 	"ray-tracer/color"
+	"ray-tracer/config"
 	"ray-tracer/core"
 	"ray-tracer/material"
 	"ray-tracer/object"
 	"ray-tracer/texture"
 	"ray-tracer/vector"
-	"ray-tracer/writer"
 )
 
 func SimpleLight() {
@@ -23,7 +22,7 @@ func SimpleLight() {
 	world.Add(object.NewSphere(vector.NewPoint3(0, 7, 0), 2, diffuseLight))
 	world.Add(object.NewQuad(vector.NewPoint3(3, 1, -2), vector.NewVector3(2, 0, 0), vector.NewVector3(0, 2, 0), diffuseLight))
 
-	writer := writer.NewWriter(os.Args[1])
+	writer := config.NewWriter()
 
 	// Camera
 	camera := core.NewCamera()
@@ -41,5 +40,7 @@ func SimpleLight() {
 	camera.DefocusAngle = 0
 	camera.FocusDistance = 10
 
-	camera.Render(world, writer)
+	if err := camera.Render(world, writer); err != nil {
+		panic(err)
+	}
 }

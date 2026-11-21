@@ -1,8 +1,14 @@
 package main
 
-import "ray-tracer/scene"
+import (
+	"os"
+	"ray-tracer/config"
+	"ray-tracer/scene"
+)
 
 func main() {
+	config.Parse(os.Args[1:])
+
 	scenes := make(map[int]func())
 	scenes[1] = scene.MaterialTester
 	scenes[2] = scene.BouncingSpheres

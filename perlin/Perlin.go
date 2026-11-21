@@ -2,7 +2,7 @@ package perlin
 
 import (
 	"math"
-	"math/rand/v2"
+	"ray-tracer/random"
 	"ray-tracer/vector"
 )
 
@@ -73,7 +73,7 @@ func generatePerlinPermutation() []int {
 
 	// Perform permutation
 	for i := pointCount - 1; i > 0; i-- {
-		target := rand.Int32N(int32(i))
+		target := random.Int32N(int32(i))
 
 		p[i], p[target] = p[target], p[i]
 	}

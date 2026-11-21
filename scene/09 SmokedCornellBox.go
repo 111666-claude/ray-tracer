@@ -1,14 +1,13 @@
 package scene
 
 import (
-	"os"
 	"ray-tracer/color"
+	"ray-tracer/config"
 	"ray-tracer/core"
 	"ray-tracer/material"
 	"ray-tracer/object"
 	"ray-tracer/transform"
 	"ray-tracer/vector"
-	"ray-tracer/writer"
 )
 
 func SmokedCornellBox() {
@@ -54,7 +53,7 @@ func SmokedCornellBox() {
 		),
 	)
 
-	writer := writer.NewWriter(os.Args[1])
+	writer := config.NewWriter()
 
 	// Camera
 	camera := core.NewCamera()
@@ -72,5 +71,7 @@ func SmokedCornellBox() {
 	camera.DefocusAngle = 0
 	camera.FocusDistance = 10
 
-	camera.Render(world, writer)
+	if err := camera.Render(world, writer); err != nil {
+		panic(err)
+	}
 }
